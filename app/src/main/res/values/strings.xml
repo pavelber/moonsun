@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">MoonAndSun</string>
+    <string name="title_activity_maps">Moon/Sen Rise/Set</string>
+    <string name="location_permission_denied">Permission Denied</string>
+    <string name="permission_required_toast">Location permission required</string>
+    <string name="permission_rationale_location">Access to the location service is required to show current position</string>
+    <string name="title_activity_main1">Main1Activity</string>
+    <!--
+    This string is used for square devices and overridden by hello_world in
+    values-round/strings.xml for round devices.
+    -->
+    <string name="hello_world">Hello Square World!</string>
+    <string name="Sunrise">Sunrise</string>
+    <string name="Sunset">Sunset</string>
+    <string name="Moonset">Moonset</string>
+    <string name="Moonrise">Moonrise</string>
+    <string name="MoonIllumination">Moon illumination</string>
+</resources>
