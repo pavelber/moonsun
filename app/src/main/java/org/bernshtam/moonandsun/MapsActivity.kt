@@ -2,12 +2,13 @@ package org.bernshtam.moonandsun
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.DatePickerDialog
 import android.content.Context
 import android.content.pm.PackageManager
-import android.location.Location
-import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
+import android.view.View
+import android.widget.DatePicker
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat.OnRequestPermissionsResultCallback
 import androidx.core.content.ContextCompat
@@ -18,15 +19,17 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.android.synthetic.main.activity_maps.*
-import net.time4j.PlainDate
 import net.time4j.android.ApplicationStarter
 import java.time.LocalDate
+import java.util.*
 
 
-class MapsActivity : AppCompatActivity(), OnMapReadyCallback, OnRequestPermissionsResultCallback {
+class MapsActivity : AppCompatActivity(), OnMapReadyCallback, OnRequestPermissionsResultCallback,
+    DatePickerDialog.OnDateSetListener {
 
     private lateinit var map: MapContainer
     private lateinit var explanationContainer: ExplanationContainer
+    private var date = LocalDate.now()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,6 +48,25 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, OnRequestPermissio
             getString(R.string.Moonset),
             getString(R.string.MoonIllumination)
         )
+
+
+        if (actionBar != null) {
+            actionBar?.title =  DATE.format(date)
+       }
+
+         if (supportActionBar != null) {
+             supportActionBar?.title =  DATE.format(date)
+        }
+        val viewId = resources.getIdentifier("action_bar_title", "id", "android")
+
+        explanation.setOnClickListener {
+            DatePickerDialog(
+                this@MapsActivity, this,
+                cal.get(Calendar.YEAR),
+                cal.get(Calendar.MONTH),
+                cal.get(Calendar.DAY_OF_MONTH)
+            ).show()
+        }
     }
 
 
@@ -80,12 +102,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, OnRequestPermissio
 
         val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
         val allProviders = locationManager.allProviders
-        for(p in allProviders){
+        for (p in allProviders) {
             val lastKnownLocation = locationManager.getLastKnownLocation(p)
-            if (lastKnownLocation!=null){
+            if (lastKnownLocation != null) {
                 val p0 = LatLng(lastKnownLocation.latitude, lastKnownLocation.longitude)
 
-                map.mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(p0,17.0f))
+                map.mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(p0, 17.0f))
                 map.onMapClick(p0)
 
                 break
@@ -115,6 +137,21 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, OnRequestPermissio
         }*/
     }
 
+    override fun onDateSet(view: DatePicker?, year: Int, month: Int, dayOfMonth: Int) {
+        date = LocalDate.of(year,month+1,dayOfMonth)
+        val ab = actionBar
+
+        if (actionBar != null) {
+            actionBar?.title =  DATE.format(date)
+        }
+
+        if (supportActionBar != null) {
+            supportActionBar?.title =  DATE.format(date)
+        }
+        map.removeMarkers()
+        map = MapContainer(map.mMap, explanationContainer, date)
+        updateMyLocation()
+    }
 
 
 }

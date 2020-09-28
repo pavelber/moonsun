@@ -115,7 +115,7 @@ class MapContainer(
     }
 
 
-    private fun removeMarkers() {
+    fun removeMarkers() {
         markers.forEach { it.remove() }
         markers.clear()
     }
