@@ -44,10 +44,10 @@ class MapContainer(val mMap: GoogleMap, private val explanationContainer: Explan
             val sunsetMoment = sunset.apply(today)
 
             removeMarkers()
-            showSun(sunriseMoment, Color.rgb(255, 255, 0), geolocation)
-            showSun(sunsetMoment, Color.rgb(255, 0, 0), geolocation)
-            showMoon(moonrise, Color.rgb(93, 100, 117), geolocation)
-            showMoon(moonset, Color.rgb(52, 61, 82), geolocation)
+            showSun(sunriseMoment, Color.rgb(237, 184, 121), geolocation)
+            showSun(sunsetMoment, Color.rgb(224, 123, 57), geolocation)
+            showMoon(moonrise, Color.rgb(204, 231, 232), geolocation)
+            showMoon(moonset, Color.rgb(25, 121, 169), geolocation)
 
 
             explanationContainer.showData(sunrise, sunset, moonrise, moonset)
