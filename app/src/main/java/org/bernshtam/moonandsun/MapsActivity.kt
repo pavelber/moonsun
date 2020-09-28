@@ -139,8 +139,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, OnRequestPermissio
 
     override fun onDateSet(view: DatePicker?, year: Int, month: Int, dayOfMonth: Int) {
         date = LocalDate.of(year,month+1,dayOfMonth)
-        val ab = actionBar
-
         if (actionBar != null) {
             actionBar?.title =  DATE.format(date)
         }
