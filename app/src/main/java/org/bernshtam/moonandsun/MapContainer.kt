@@ -1,7 +1,6 @@
 package org.bernshtam.moonandsun
 
 import android.graphics.Color
-import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Polyline
@@ -9,24 +8,30 @@ import com.google.android.gms.maps.model.PolylineOptions
 import com.grum.geocalc.Coordinate
 import com.grum.geocalc.EarthCalc
 import com.grum.geocalc.Point
-
 import net.time4j.Moment
 import net.time4j.PlainDate
 import net.time4j.calendar.astro.*
 import net.time4j.engine.CalendarDate
 import net.time4j.engine.ChronoFunction
 import net.time4j.tz.ZonalOffset
+import java.time.LocalDate
 
-class MapContainer(val mMap: GoogleMap, private val explanationContainer: ExplanationContainer) : GoogleMap.OnMapClickListener {
+class MapContainer(
+    val mMap: GoogleMap,
+    private val explanationContainer: ExplanationContainer,
+    private val date: LocalDate
+) :
+    GoogleMap.OnMapClickListener {
     init {
         mMap.setOnMapClickListener(this)
     }
+
     private val markers: MutableList<Polyline> = mutableListOf()
 
     override fun onMapClick(p0: LatLng?) {
 
         p0?.apply {
-            val today = PlainDate.nowInSystemTime()
+            val today = PlainDate.of(date.year, date.dayOfYear)
             val geolocation = MyLocation(p0)
             val here = SolarTime.ofLocation(latitude, longitude)
             val lunarTime = LunarTime.ofLocation(
@@ -46,7 +51,7 @@ class MapContainer(val mMap: GoogleMap, private val explanationContainer: Explan
             removeMarkers()
             showSun(sunriseMoment, Color.rgb(237, 184, 121), geolocation)
             showSun(sunsetMoment, Color.rgb(224, 123, 57), geolocation)
-            showMoon(moonrise, Color.rgb(204, 231, 232), geolocation)
+            showMoon(moonrise, Color.rgb(105, 189, 210), geolocation)
             showMoon(moonset, Color.rgb(25, 121, 169), geolocation)
 
 
@@ -99,7 +104,7 @@ class MapContainer(val mMap: GoogleMap, private val explanationContainer: Explan
                 Coordinate.fromDegrees(location.latitude),
                 Coordinate.fromDegrees(location.longitude)
             ),
-            azimuth, 12000.0
+            azimuth, 120000.0
         )
 
         return mMap.addPolyline(

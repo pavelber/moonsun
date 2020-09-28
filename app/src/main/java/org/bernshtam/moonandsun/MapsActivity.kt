@@ -18,18 +18,20 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.android.synthetic.main.activity_maps.*
+import net.time4j.PlainDate
 import net.time4j.android.ApplicationStarter
+import java.time.LocalDate
 
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback, OnRequestPermissionsResultCallback {
 
     private lateinit var map: MapContainer
     private lateinit var explanationContainer: ExplanationContainer
-    private var firstLocation = true
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        ApplicationStarter.initialize(this, true);
+        ApplicationStarter.initialize(this, true)
         setContentView(R.layout.activity_maps)
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager
@@ -49,7 +51,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, OnRequestPermissio
     override fun onMapReady(googleMap: GoogleMap?) {
 
         googleMap?.apply {
-            map = MapContainer(googleMap, explanationContainer)
+            map = MapContainer(googleMap, explanationContainer, LocalDate.now())
             updateMyLocation()
         }
     }
@@ -108,9 +110,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, OnRequestPermissio
         ) {
             canGetLocation()
             //  mMyLocationCheckbox.setChecked(true)
-        } else {
+        }/* else {
             //  mShowPermissionDeniedDialog = true
-        }
+        }*/
     }
 
 
