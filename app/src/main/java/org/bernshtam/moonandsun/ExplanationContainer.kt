@@ -47,7 +47,7 @@ class ExplanationContainer(
         sunsetStr?.apply { s.add("$sunset: $sunsetStr") }
         moonriseStr?.apply { s.add("$moonrise: $moonriseStr") }
         moonsetStr?.apply { s.add("$moonset: $moonsetStr") }
-        s.add("$moonillu: $moonIllumination%%")
+        s.add("(Time in Timezone: ${TZ.displayName}) $moonillu: $moonIllumination%%")
         return  s.joinToString()
     }
 }
