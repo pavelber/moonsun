@@ -1,23 +1,29 @@
 package org.bernshtam.moonandsun
 
-import android.Manifest
+import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.DatePickerDialog
 import android.content.Context
-import android.content.pm.PackageManager
+import android.content.Intent
+import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.location.LocationManager
 import android.os.Bundle
-import android.view.View
 import android.widget.DatePicker
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat.OnRequestPermissionsResultCallback
-import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.checkSelfPermission
 import com.example.kotlindemos.PermissionUtils
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.libraries.places.api.Places
+import com.google.android.libraries.places.api.model.Place
+import com.google.android.libraries.places.widget.Autocomplete
+import com.google.android.libraries.places.widget.AutocompleteActivity
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import kotlinx.android.synthetic.main.activity_maps.*
 import net.time4j.android.ApplicationStarter
 import java.time.LocalDate
@@ -50,14 +56,24 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, OnRequestPermissio
         )
 
 
-        if (actionBar != null) {
-            actionBar?.title =  DATE.format(date)
-       }
-
-         if (supportActionBar != null) {
-             supportActionBar?.title =  DATE.format(date)
+        putDateText()
+        val apiKey = getString(R.string.maps_api_key)
+        if (!Places.isInitialized()) {
+            Places.initialize(applicationContext, apiKey)
         }
-        val viewId = resources.getIdentifier("action_bar_title", "id", "android")
+        searchButton.setOnClickListener {
+            val fields: List<Place.Field> =
+                listOf(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG)
+
+            // Start the autocomplete intent.
+
+            // Start the autocomplete intent.
+            val intent: Intent = Autocomplete.IntentBuilder(
+                AutocompleteActivityMode.OVERLAY,
+                fields
+            ).build(this)
+            startActivityForResult(intent, 1)
+        }
 
         explanation.setOnClickListener {
             DatePickerDialog(
@@ -69,6 +85,22 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, OnRequestPermissio
         }
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == 1) {
+            if (resultCode == Activity.RESULT_OK) {
+                val place = Autocomplete.getPlaceFromIntent(data!!)
+                val p0 = place.latLng
+                map.mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(p0, 17.0f))
+                map.onMapClick(p0)
+            } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
+                // error
+            } else if (resultCode == Activity.RESULT_CANCELED) {
+                // The user canceled the operation.
+            }
+            return
+        }
+        super.onActivityResult(requestCode, resultCode, data)
+    }
 
     override fun onMapReady(googleMap: GoogleMap?) {
 
@@ -79,20 +111,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, OnRequestPermissio
     }
 
     private fun updateMyLocation() {
-
-        if (ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            )
-            == PackageManager.PERMISSION_GRANTED
-        ) {
+        if (checkSelfPermission(this, ACCESS_FINE_LOCATION) == PERMISSION_GRANTED) {
             canGetLocation()
         } else {
-
-            PermissionUtils.requestPermission(
-                this, 1,
-                Manifest.permission.ACCESS_FINE_LOCATION, false
-            )
+            PermissionUtils.requestPermission(this, 1, ACCESS_FINE_LOCATION, false)
         }
     }
 
@@ -106,14 +128,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, OnRequestPermissio
             val lastKnownLocation = locationManager.getLastKnownLocation(p)
             if (lastKnownLocation != null) {
                 val p0 = LatLng(lastKnownLocation.latitude, lastKnownLocation.longitude)
-
                 map.mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(p0, 17.0f))
                 map.onMapClick(p0)
-
                 break
             }
         }
-
     }
 
     @SuppressLint("MissingPermission")
@@ -127,7 +146,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, OnRequestPermissio
         }
         if (PermissionUtils.isPermissionGranted(
                 permissions, grantResults,
-                Manifest.permission.ACCESS_FINE_LOCATION
+                ACCESS_FINE_LOCATION
             )
         ) {
             canGetLocation()
@@ -138,17 +157,21 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, OnRequestPermissio
     }
 
     override fun onDateSet(view: DatePicker?, year: Int, month: Int, dayOfMonth: Int) {
-        date = LocalDate.of(year,month+1,dayOfMonth)
-        if (actionBar != null) {
-            actionBar?.title =  DATE.format(date)
-        }
-
-        if (supportActionBar != null) {
-            supportActionBar?.title =  DATE.format(date)
-        }
+        date = LocalDate.of(year, month + 1, dayOfMonth)
+        putDateText()
         map.removeMarkers()
         map = MapContainer(map.mMap, explanationContainer, date)
         updateMyLocation()
+    }
+
+    private fun putDateText() {
+        if (actionBar != null) {
+            actionBar?.title = DATE.format(date)
+        }
+
+        if (supportActionBar != null) {
+            supportActionBar?.title = DATE.format(date)
+        }
     }
 
 

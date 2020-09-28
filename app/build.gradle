@@ -33,6 +33,7 @@ android {
 }
 
 dependencies {
+    implementation 'com.google.android.libraries.places:places:2.4.0'
     implementation group: 'net.time4j', name: 'time4j-android', version: '4.7-2020a'
     implementation group: 'com.github.grumlimited', name: 'geocalc', version: '0.5.8'
     implementation fileTree(dir: 'libs', include: ['*.jar'])
