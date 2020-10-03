@@ -1,7 +1,9 @@
 package org.bernshtam.moonandsun
 
 import android.graphics.Color
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Polyline
 import com.google.android.gms.maps.model.PolylineOptions
@@ -15,6 +17,7 @@ import net.time4j.engine.CalendarDate
 import net.time4j.engine.ChronoFunction
 import net.time4j.tz.ZonalOffset
 import java.time.LocalDate
+
 
 class MapContainer(
     val mMap: GoogleMap,
@@ -58,6 +61,13 @@ class MapContainer(
             explanationContainer.showData(sunrise, sunset, moonrise, moonset)
         }
 
+    }
+
+    fun rotateMap(bearing: Float) {
+        val currentPlace = CameraPosition.Builder()
+            .target(mMap.cameraPosition.target).zoom(mMap.cameraPosition.zoom)
+            .bearing(bearing).build()
+        mMap.moveCamera(CameraUpdateFactory.newCameraPosition(currentPlace))
     }
 
     private fun showSun(moment: Moment?, c: Int, loc: GeoLocation) {

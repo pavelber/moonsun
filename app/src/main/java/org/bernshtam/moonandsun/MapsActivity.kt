@@ -7,6 +7,10 @@ import android.app.DatePickerDialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager.PERMISSION_GRANTED
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.location.LocationManager
 import android.os.Bundle
 import android.widget.DatePicker
@@ -31,7 +35,7 @@ import java.util.*
 
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback, OnRequestPermissionsResultCallback,
-    DatePickerDialog.OnDateSetListener {
+    DatePickerDialog.OnDateSetListener, SensorEventListener {
 
     private lateinit var map: MapContainer
     private lateinit var explanationContainer: ExplanationContainer
@@ -83,6 +87,21 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, OnRequestPermissio
                 cal.get(Calendar.DAY_OF_MONTH)
             ).show()
         }
+
+    }
+
+    private fun registerCompassListener() {
+        val sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
+        val compass = sensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION)
+        sensorManager.registerListener(this, compass, SensorManager.SENSOR_DELAY_NORMAL);
+    }
+
+    override fun onSensorChanged(event: SensorEvent) {
+        val azimuth = event.values[0]
+        map.rotateMap(azimuth)
+    }
+
+    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -107,6 +126,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, OnRequestPermissio
         googleMap?.apply {
             map = MapContainer(googleMap, explanationContainer, LocalDate.now())
             updateMyLocation()
+
+            registerCompassListener()
         }
     }
 
