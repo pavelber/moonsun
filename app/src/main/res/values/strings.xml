@@ -5,10 +5,11 @@
     <string name="permission_required_toast">Location permission required</string>
     <string name="permission_rationale_location">Access to the location service is required to show current position</string>
 
-    <string name="Sunrise">Sunrise</string>
-    <string name="Sunset">Sunset</string>
-    <string name="Moonset">Moonset</string>
+    <string name="Sunrise">Sunrise </string>
+    <string name="Sunset">Sunset  </string>
+    <string name="Moonset">Moonset </string>
     <string name="Moonrise">Moonrise</string>
     <string name="MoonIllumination">Moon illumination</string>
     <string name="click_to_change_date">Click to change:</string>
+    <string name="search_icon">Search icon</string>
 </resources>
