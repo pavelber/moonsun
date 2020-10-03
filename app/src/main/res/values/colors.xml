@@ -3,4 +3,8 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
+    <color name="sunset">#E07B39</color>
+    <color name="sunrise">#EDB879</color>
+    <color name="moonrise">#69BDD2</color>
+    <color name="moonset">#1979A9</color>
 </resources>

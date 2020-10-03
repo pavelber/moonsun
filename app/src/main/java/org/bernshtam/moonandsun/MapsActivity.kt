@@ -128,6 +128,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, OnRequestPermissio
             updateMyLocation()
 
             registerCompassListener()
+
+            val intent = Intent(this@MapsActivity, LegendActivity::class.java)
+            startActivity(intent)
         }
     }
 
