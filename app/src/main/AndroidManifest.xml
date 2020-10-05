@@ -20,8 +20,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".LegendActivity" android:theme="@style/Theme.Transparent"></activity>
-
         <uses-library
             android:name="com.google.android.maps"
             android:required="false" />

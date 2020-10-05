@@ -79,7 +79,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, OnRequestPermissio
             startActivityForResult(intent, 1)
         }
 
-        explanation.setOnClickListener {
+        calendarButton.setOnClickListener {
             DatePickerDialog(
                 this@MapsActivity, this,
                 cal.get(Calendar.YEAR),
@@ -93,7 +93,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, OnRequestPermissio
     private fun registerCompassListener() {
         val sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
         val compass = sensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION)
-        sensorManager.registerListener(this, compass, SensorManager.SENSOR_DELAY_NORMAL);
+        sensorManager.registerListener(this, compass, SensorManager.SENSOR_DELAY_UI);
     }
 
     override fun onSensorChanged(event: SensorEvent) {
@@ -128,9 +128,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, OnRequestPermissio
             updateMyLocation()
 
             registerCompassListener()
-//
-//            val intent = Intent(this@MapsActivity, LegendActivity::class.java)
-//            startActivity(intent)
         }
     }
 
