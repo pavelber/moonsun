@@ -43,8 +43,8 @@ class MapContainer(
                 longitude
             )
             val moonlight = lunarTime.on(today)
-            val moonrise = moonlight.moonrise()
-            val moonset = moonlight.moonset()
+            val moonriseMoment = moonlight.moonrise()
+            val moonsetMoment = moonlight.moonset()
             val sunrise: ChronoFunction<CalendarDate, Moment> = here.sunrise()
             val sunset: ChronoFunction<CalendarDate, Moment> = here.sunset()
 
@@ -54,11 +54,16 @@ class MapContainer(
             removeMarkers()
             showSun(sunriseMoment, Color.rgb(237, 184, 121), geolocation)
             showSun(sunsetMoment, Color.rgb(224, 123, 57), geolocation)
-            showMoon(moonrise, Color.rgb(105, 189, 210), geolocation)
-            showMoon(moonset, Color.rgb(25, 121, 169), geolocation)
+            showMoon(moonriseMoment, Color.rgb(105, 189, 210), geolocation)
+            showMoon(moonsetMoment, Color.rgb(25, 121, 169), geolocation)
 
 
-            explanationContainer.showData(sunrise, sunset, moonrise, moonset)
+            explanationContainer.showData(
+                sunriseMoment,
+                sunsetMoment,
+                moonriseMoment,
+                moonsetMoment
+            )
         }
 
     }

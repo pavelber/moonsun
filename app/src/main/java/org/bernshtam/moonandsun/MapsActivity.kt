@@ -7,6 +7,7 @@ import android.app.DatePickerDialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager.PERMISSION_GRANTED
+import android.graphics.Color
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -31,7 +32,6 @@ import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import kotlinx.android.synthetic.main.activity_maps.*
 import net.time4j.android.ApplicationStarter
 import java.time.LocalDate
-import java.util.*
 
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback, OnRequestPermissionsResultCallback,
@@ -40,6 +40,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, OnRequestPermissio
     private lateinit var map: MapContainer
     private lateinit var explanationContainer: ExplanationContainer
     private var date = LocalDate.now()
+    private var useCompase: Boolean = false
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -82,10 +83,17 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, OnRequestPermissio
         calendarButton.setOnClickListener {
             DatePickerDialog(
                 this@MapsActivity, this,
-                cal.get(Calendar.YEAR),
-                cal.get(Calendar.MONTH),
-                cal.get(Calendar.DAY_OF_MONTH)
+                date.year,
+                date.monthValue - 1,
+                date.dayOfMonth
             ).show()
+        }
+
+        compassButton.setOnClickListener {
+            useCompase = !useCompase
+            val color = if (useCompase) Color.rgb(184, 116, 85) else Color.TRANSPARENT
+            compassButton.setBackgroundColor(color)
+            map.rotateMap(0.0f)
         }
 
     }
@@ -93,12 +101,14 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, OnRequestPermissio
     private fun registerCompassListener() {
         val sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
         val compass = sensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION)
-        sensorManager.registerListener(this, compass, SensorManager.SENSOR_DELAY_UI);
+        sensorManager.registerListener(this, compass, SensorManager.SENSOR_DELAY_UI)
     }
 
     override fun onSensorChanged(event: SensorEvent) {
-        val azimuth = event.values[0]
-        map.rotateMap(azimuth)
+        if (useCompase) {
+            val azimuth = event.values[0]
+            map.rotateMap(azimuth)
+        }
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
@@ -126,7 +136,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, OnRequestPermissio
         googleMap?.apply {
             map = MapContainer(googleMap, explanationContainer, LocalDate.now())
             updateMyLocation()
-
+            map.mMap.setOnMyLocationButtonClickListener {
+                canGetLocation()
+                true
+            }
             registerCompassListener()
         }
     }
@@ -181,20 +194,22 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, OnRequestPermissio
         date = LocalDate.of(year, month + 1, dayOfMonth)
         putDateText()
         map.removeMarkers()
+        val oldLocation = map.mMap.cameraPosition.target
         map = MapContainer(map.mMap, explanationContainer, date)
-        updateMyLocation()
+        map.onMapClick(oldLocation)
     }
 
     private fun putDateText() {
         if (actionBar != null) {
-            actionBar?.title = DATE.format(date)
+            actionBar?.title = dateText(date)
         }
 
         if (supportActionBar != null) {
-            supportActionBar?.title = DATE.format(date)
+            supportActionBar?.title = dateText(date)
         }
     }
 
+    private fun dateText(date: LocalDate): String = DATE.format(date) + ",  ${TZ.displayName}"
 
 }
 

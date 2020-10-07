@@ -2,10 +2,7 @@ package org.bernshtam.moonandsun
 
 import android.widget.TextView
 import net.time4j.Moment
-import net.time4j.PlainDate
 import net.time4j.calendar.astro.MoonPhase
-import net.time4j.engine.CalendarDate
-import net.time4j.engine.ChronoFunction
 
 class ExplanationContainer(
     private val explanation: TextView,
@@ -18,14 +15,13 @@ class ExplanationContainer(
 
 
     fun showData(
-        sunrise: ChronoFunction<CalendarDate, Moment>?,
-        sunset: ChronoFunction<CalendarDate, Moment>?,
+        sunrise: Moment?,
+        sunset: Moment?,
         moonrise: Moment?,
         moonset: Moment?
     ) {
 
-        val date = PlainDate.nowInSystemTime()
-        val momentInADay = moonrise?:moonset?:sunrise?.apply(date)?:sunset?.apply(date)
+        val momentInADay = moonrise ?: moonset ?: sunrise ?: sunset
         val moonIllumination = (MoonPhase.getIllumination(momentInADay) * 100).toInt()
         val sunriseStr = sunrise?.let{TIME.format(sunrise.toLocalTimeDate())}
         val sunsetStr = sunset?.let{TIME.format(sunset.toLocalTimeDate())}
@@ -47,7 +43,7 @@ class ExplanationContainer(
         sunsetStr?.apply { s.add("$sunset: $sunsetStr") }
         moonriseStr?.apply { s.add("$moonrise: $moonriseStr") }
         moonsetStr?.apply { s.add("$moonset: $moonsetStr") }
-        s.add("(Time in Timezone: ${TZ.displayName}) $moonillu: $moonIllumination%%")
+        s.add("$moonillu: $moonIllumination %")
         return  s.joinToString()
     }
 }
