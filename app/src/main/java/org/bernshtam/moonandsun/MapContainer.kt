@@ -28,37 +28,34 @@ class MapContainer(
 
     private val markers: MutableList<Polyline> = mutableListOf()
 
-    override fun onMapClick(p0: LatLng?) {
+    override fun onMapClick(p0: LatLng) {
+        val today = PlainDate.of(date.year, date.dayOfYear)
+        val geolocation = MyLocation(p0)
+        val here = SolarTime.ofLocation(p0.latitude, p0.longitude)
+        val lunarTime = LunarTime.ofLocation(
+            ZonalOffset.ofTotalSeconds(TZ.rawOffset / 1000),
+            p0.latitude,
+            p0.longitude
+        )
+        val moonlight = lunarTime.on(today)
+        val moonrise = moonlight.moonrise()
+        val moonset = moonlight.moonset()
+        val sunrise: ChronoFunction<CalendarDate, Moment> = here.sunrise()
+        val sunset: ChronoFunction<CalendarDate, Moment> = here.sunset()
 
-        p0?.apply {
-            val today = PlainDate.of(date.year, date.dayOfYear)
-            val geolocation = MyLocation(p0)
-            val here = SolarTime.ofLocation(latitude, longitude)
-            val lunarTime = LunarTime.ofLocation(
-                ZonalOffset.ofTotalSeconds(TZ.rawOffset / 1000),
-                latitude,
-                longitude
-            )
-            val moonlight = lunarTime.on(today)
-            val moonrise = moonlight.moonrise()
-            val moonset = moonlight.moonset()
-            val sunrise: ChronoFunction<CalendarDate, Moment> = here.sunrise()
-            val sunset: ChronoFunction<CalendarDate, Moment> = here.sunset()
+        val sunriseMoment = sunrise.apply(today)
+        val sunsetMoment = sunset.apply(today)
 
-            val sunriseMoment = sunrise.apply(today)
-            val sunsetMoment = sunset.apply(today)
-
-            removeMarkers()
-            showSun(sunriseMoment, Color.rgb(237, 184, 121), geolocation)
-            showSun(sunsetMoment, Color.rgb(224, 123, 57), geolocation)
-            showMoon(moonrise, Color.rgb(105, 189, 210), geolocation)
-            showMoon(moonset, Color.rgb(25, 121, 169), geolocation)
+        removeMarkers()
+        showSun(sunriseMoment, Color.rgb(237, 184, 121), geolocation)
+        showSun(sunsetMoment, Color.rgb(224, 123, 57), geolocation)
+        showMoon(moonrise, Color.rgb(105, 189, 210), geolocation)
+        showMoon(moonset, Color.rgb(25, 121, 169), geolocation)
 
 
-            explanationContainer.showData(sunrise, sunset, moonrise, moonset)
-        }
-
+        explanationContainer.showData(sunrise, sunset, moonrise, moonset)
     }
+
 
     private fun showSun(moment: Moment?, c: Int, loc: GeoLocation) {
         moment?.apply {

@@ -36,6 +36,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, OnRequestPermissio
     private lateinit var explanationContainer: ExplanationContainer
     private var date = LocalDate.now()
     private lateinit var binding: ActivityMapsBinding
+    private val cal = Calendar.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,9 +64,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, OnRequestPermissio
         }
         binding.searchButton.setOnClickListener {
             val fields: List<Place.Field> =
-                listOf(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG)
-
-            // Start the autocomplete intent.
+                listOf(Place.Field.ID, Place.Field.DISPLAY_NAME, Place.Field.LOCATION)
 
             // Start the autocomplete intent.
             val intent: Intent = Autocomplete.IntentBuilder(
@@ -87,14 +86,15 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, OnRequestPermissio
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == 1) {
-            if (resultCode == Activity.RESULT_OK) {
+            if (resultCode == RESULT_OK) {
                 val place = Autocomplete.getPlaceFromIntent(data!!)
-                val p0 = place.latLng
-                map.mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(p0, 17.0f))
-                map.onMapClick(p0)
+                place.location?.let { p0 ->
+                    map.mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(p0, 17.0f))
+                    map.onMapClick(p0)
+                }
             } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
                 // error
-            } else if (resultCode == Activity.RESULT_CANCELED) {
+            } else if (resultCode == RESULT_CANCELED) {
                 // The user canceled the operation.
             }
             return
@@ -102,12 +102,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, OnRequestPermissio
         super.onActivityResult(requestCode, resultCode, data)
     }
 
-    override fun onMapReady(googleMap: GoogleMap?) {
+    override fun onMapReady(googleMap: GoogleMap) {
 
-        googleMap?.apply {
             map = MapContainer(googleMap, explanationContainer, LocalDate.now())
             updateMyLocation()
-        }
     }
 
     private fun updateMyLocation() {
