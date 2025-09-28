@@ -24,11 +24,10 @@ import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.Autocomplete
 import com.google.android.libraries.places.widget.AutocompleteActivity
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
-import kotlinx.android.synthetic.main.activity_maps.*
 import net.time4j.android.ApplicationStarter
 import java.time.LocalDate
 import java.util.*
-
+import org.bernshtam.moonandsun.databinding.ActivityMapsBinding
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback, OnRequestPermissionsResultCallback,
     DatePickerDialog.OnDateSetListener {
@@ -36,18 +35,19 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, OnRequestPermissio
     private lateinit var map: MapContainer
     private lateinit var explanationContainer: ExplanationContainer
     private var date = LocalDate.now()
-
+    private lateinit var binding: ActivityMapsBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         ApplicationStarter.initialize(this, true)
-        setContentView(R.layout.activity_maps)
+        binding = ActivityMapsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
         explanationContainer = ExplanationContainer(
-            explanation,
+            binding.explanation,
             getString(R.string.Sunrise),
             getString(R.string.Sunset),
             getString(R.string.Moonrise),
@@ -61,7 +61,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, OnRequestPermissio
         if (!Places.isInitialized()) {
             Places.initialize(applicationContext, apiKey)
         }
-        searchButton.setOnClickListener {
+        binding.searchButton.setOnClickListener {
             val fields: List<Place.Field> =
                 listOf(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG)
 
@@ -75,7 +75,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, OnRequestPermissio
             startActivityForResult(intent, 1)
         }
 
-        explanation.setOnClickListener {
+        binding.explanation.setOnClickListener {
             DatePickerDialog(
                 this@MapsActivity, this,
                 cal.get(Calendar.YEAR),
@@ -141,6 +141,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, OnRequestPermissio
         permissions: Array<String>,
         grantResults: IntArray
     ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode != 1) {
             return
         }
@@ -176,4 +177,3 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, OnRequestPermissio
 
 
 }
-
