@@ -1,19 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">MoonAndSun</string>
-    <string name="title_activity_maps">Moon/Sun Rise/Set</string>
-    <string name="location_permission_denied">Permission Denied</string>
-    <string name="permission_required_toast">Location permission required</string>
-    <string name="permission_rationale_location">Access to the location service is required to show current position</string>
-
+    <string name="app_name">Moon and Sun</string>
+    <string name="title_activity_maps">Moon and Sun</string>
+    <string name="explanation_text">Tap on the map to see sun and moon directions</string>
     <string name="Sunrise">Sunrise</string>
     <string name="Sunset">Sunset</string>
-    <string name="Moonset">Moonset</string>
     <string name="Moonrise">Moonrise</string>
-    <string name="MoonIllumination">Moon illumination</string>
-    <string name="click_to_change_date">Click to change:</string>
-    <string name="explanation_text">Tap on the map to see sun and moon data for any location</string>
-    <string name="search_icon_desc">Search icon</string>
-    <string name="search_hint">Search for a place...</string>
-    <!-- Added for restored calendar button -->
+    <string name="Moonset">Moonset</string>
+    <string name="MoonIllumination">Moon Illumination</string>
+    <string name="search_hint">Search for a location</string>
+    <string name="search_icon_desc">Search location</string>
     <string name="change_date">Change date</string>
+
+    <!-- Permission-related strings -->
+    <string name="location_permission_denied">Location permission was denied. Some features may not work properly.</string>
+    <string name="permission_required_toast">Location permission is required for this app to function properly.</string>
+    <string name="permission_rationale_location">This app needs location permission to show your current position on the map and calculate sun/moon positions.</string>
 </resources>
