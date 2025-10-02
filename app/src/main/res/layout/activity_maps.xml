@@ -84,7 +84,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         tools:context=".MapsActivity" />
 
-    <!-- Legend Panel at bottom-right -->
+    <!-- Legend Panel at top-right, below calendar button -->
     <LinearLayout
         android:id="@+id/legendPanel"
         android:layout_width="wrap_content"
@@ -95,7 +95,7 @@
         android:padding="12dp"
         android:elevation="8dp"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/calendarButton"
         app:layout_constraintEnd_toEndOf="parent">
 
         <!-- Sunrise row -->

@@ -19,7 +19,8 @@ import java.time.LocalDate
 class MapContainer(
     val mMap: GoogleMap,
     private val explanationContainer: ExplanationContainer,
-    private val date: LocalDate
+    private val date: LocalDate,
+    private val onLocationSelected: ((LatLng) -> Unit)? = null
 ) :
     GoogleMap.OnMapClickListener {
     init {
@@ -29,6 +30,9 @@ class MapContainer(
     private val markers: MutableList<Polyline> = mutableListOf()
 
     override fun onMapClick(p0: LatLng) {
+        // Store the selected location in the parent activity
+        onLocationSelected?.invoke(p0)
+
         val today = PlainDate.of(date.year, date.dayOfYear)
         val geolocation = MyLocation(p0)
         val here = SolarTime.ofLocation(p0.latitude, p0.longitude)
@@ -53,7 +57,7 @@ class MapContainer(
         showMoon(moonset, Color.rgb(25, 121, 169), geolocation)
 
 
-        explanationContainer.showData(sunrise, sunset, moonrise, moonset)
+        explanationContainer.showData(sunrise, sunset, moonrise, moonset, today)
     }
 
 

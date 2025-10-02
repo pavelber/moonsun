@@ -55,6 +55,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, OnRequestPermissio
     private var searchRunnable: Runnable? = null
     private val SEARCH_DEBOUNCE_MS = 300L
 
+    // Store the selected location to preserve it when date changes
+    private var selectedLocation: LatLng? = null
+
     companion object {
         private val DATE = DateTimeFormatter.ofPattern("MMM dd, yyyy")
     }
@@ -302,7 +305,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, OnRequestPermissio
         googleMap.uiSettings.isCompassEnabled = true
         googleMap.uiSettings.isMapToolbarEnabled = true
 
-        map = MapContainer(googleMap, explanationContainer, date)
+        map = MapContainer(googleMap, explanationContainer, date) { location ->
+            // Callback to store the selected location
+            selectedLocation = location
+        }
         updateMyLocation()
     }
 
@@ -358,8 +364,21 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, OnRequestPermissio
         cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
         putDateText()
         map.removeMarkers()
-        map = MapContainer(map.mMap, explanationContainer, date)
-        updateMyLocation()
+        // Restore the previous location if available
+        selectedLocation?.let { location ->
+            map = MapContainer(map.mMap, explanationContainer, date) { newLocation ->
+                // Callback to store the selected location
+                selectedLocation = newLocation
+            }
+            map.onMapClick(location)
+        } ?: run {
+            // Fallback to device location if no previous location is set
+            map = MapContainer(map.mMap, explanationContainer, date) { newLocation ->
+                // Callback to store the selected location
+                selectedLocation = newLocation
+            }
+            updateMyLocation()
+        }
     }
 
     private fun putDateText() {

@@ -40,17 +40,15 @@ class ExplanationContainer(
         sunrise: ChronoFunction<CalendarDate, Moment>,
         sunset: ChronoFunction<CalendarDate, Moment>,
         moonrise: Moment?,
-        moonset: Moment?
+        moonset: Moment?,
+        selectedDate: PlainDate
     ) {
         // Show the legend panel
         legendPanel?.visibility = View.VISIBLE
 
-        // Get current date for calculations
-        val today = PlainDate.nowInSystemTime()
-
-        // Format and display times
-        val sunriseTime = sunrise.apply(today)
-        val sunsetTime = sunset.apply(today)
+        // Use the selected date instead of current system date
+        val sunriseTime = sunrise.apply(selectedDate)
+        val sunsetTime = sunset.apply(selectedDate)
 
         sunriseTimeView?.text = formatTime(sunriseTime)
         sunsetTimeView?.text = formatTime(sunsetTime)
